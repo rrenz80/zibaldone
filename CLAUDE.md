@@ -24,7 +24,11 @@ ktlint is configured via the `org.jlleitschuh.gradle.ktlint` Gradle plugin. Run 
 
 ## Delivering a build
 
-When asked to build/deliver/ship a version of the app, use the `deliver-apk` skill — it encodes the full release protocol from PROGETTO.md §9.3 (version bump, single-APK rule, dex verification, changelog entry, Italian test notes). Don't do a plain `assembleDebug` and call it delivered.
+When asked to build/deliver/ship a version of the app, use the `deliver-apk` skill — it encodes the full release protocol from PROGETTO.md §9.3 (version bump, single-APK rule, dex verification, changelog entry, release commit + annotated tag, Italian test notes). Don't do a plain `assembleDebug` and call it delivered.
+
+## Git
+
+Repo `rrenz80/zibaldone` (private), remote `origin`, branch `main`. Commit messages are in Italian, matching PROGETTO.md and the existing history; code comments stay English. Each delivered version is one commit plus one annotated tag `v<versionName>`, created by the `deliver-apk` skill. Never move or force-push a tag that has already been pushed.
 
 ## Critical rendering constraint
 

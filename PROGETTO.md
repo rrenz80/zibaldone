@@ -282,7 +282,17 @@ export ANDROID_HOME=$HOME/android-sdk
 4. **Verifica dex**: `unzip` tutti i `classes*.dex`, `strings | grep -c
    <simbolo-nuovo>` — su ogni dex (D8 sparge nei N bucket).
 5. Append una sezione a questo file con sintomi/root-cause/fix.
-6. Messaggio di consegna in italiano con la procedura di test.
+6. **Commit + tag** (dalla v1.9, da quando il progetto è su GitHub —
+   `rrenz80/zibaldone`, privato): `git add -A`, verifica con
+   `git status --short` che non entrino output di build o
+   `local.properties`, commit in italiano con oggetto
+   `v<versionName>: <cosa cambia>`, poi tag **annotato**
+   `git tag -a v<versionName>` e `git push origin main --follow-tags`.
+   Il tag si crea **solo dopo** che build e verifica dex sono passate:
+   deve puntare a una versione che compila davvero. Se il tag esiste
+   già, la versione non è stata incrementata → torna al punto 1; non
+   spostare né forzare mai un tag già pubblicato.
+7. Messaggio di consegna in italiano con la procedura di test.
 
 ## 10. Lezioni di compilazione (in ordine, tutte le sessioni)
 
