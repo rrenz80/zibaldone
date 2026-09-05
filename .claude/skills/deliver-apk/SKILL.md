@@ -5,7 +5,7 @@ description: Build and deliver a new APK version of Zibaldone (the moodboard app
 
 Follow every step below, in order, for any request to build/deliver/ship a version of this app. Do not skip steps or substitute a plain `assembleDebug` — the debug signature is identical across builds, so skipping the version bump means the app on the tablet silently fails to update even though the file looks new.
 
-Steps 1–5 produce the release; step 6 records it in git. Every delivered version gets exactly one commit and one tag, so `versionCode`, the PROGETTO.md changelog and the git history never drift apart.
+Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Every delivered version gets exactly one commit, one tag and one GitHub release carrying the APK, so `versionCode`, the PROGETTO.md changelog, the git history and the downloadable installable never drift apart.
 
 1. **Bump the version.** In `app/build.gradle.kts`, increment `versionCode` by 1 and give `versionName` a new label. Confirm what changed in this release before picking the label.
 
@@ -51,4 +51,30 @@ Steps 1–5 produce the release; step 6 records it in git. Every delivered versi
    If the tag already exists, the version was never bumped — go back to step 1 rather
    than moving or force-pushing the tag. Never rewrite a tag that has been pushed.
 
-7. **Deliver in Italian.** Reply to the user with a delivery message in Italian describing the manual test procedure for verifying the fix/feature on-device. Mention the tag you pushed.
+7. **Publish the GitHub release with the APK attached.** The tag alone carries the
+   source; the release is what makes the installable downloadable.
+
+   ```bash
+   gh release create v<versionName> ~/Zibaldone-v<versionName>.apk \
+     -R rrenz80/zibaldone \
+     -t "v<versionName> — <titolo breve>" \
+     -F <file-con-le-note>
+   ```
+
+   Release notes in **Italian**, written for someone installing on the tablet, not for
+   a developer: what changed, and what to check. Reuse the manual test procedure from
+   step 8 rather than writing it twice. Pass them via `-F` from a file (a scratchpad
+   file is fine) — heredocs through `-n` mangle multi-line text.
+
+   Then verify the asset actually uploaded, rather than trusting the command:
+
+   ```bash
+   gh release view v<versionName> -R rrenz80/zibaldone --json assets \
+     --jq '.assets[] | "\(.name) — \(.size) byte"'
+   ```
+
+   The repo is **private**, so the download link asks for a GitHub login. That is fine
+   on a device already signed in; if the user needs a link that just works, serve the
+   APK over Tailscale instead (bind to the tailnet IP only, never `0.0.0.0`).
+
+8. **Deliver in Italian.** Reply to the user with a delivery message in Italian describing the manual test procedure for verifying the fix/feature on-device. Give the release link and the tag.

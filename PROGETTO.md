@@ -292,7 +292,12 @@ export ANDROID_HOME=$HOME/android-sdk
    deve puntare a una versione che compila davvero. Se il tag esiste
    già, la versione non è stata incrementata → torna al punto 1; non
    spostare né forzare mai un tag già pubblicato.
-7. Messaggio di consegna in italiano con la procedura di test.
+7. **GitHub release** con l'APK allegato: `gh release create v<versionName>
+   ~/Zibaldone-v<versionName>.apk -R rrenz80/zibaldone -t "..." -F <note>`,
+   note in italiano scritte per chi installa. Verifica che l'asset sia
+   davvero caricato (`gh release view --json assets`). Il repo è privato:
+   il link chiede il login GitHub.
+8. Messaggio di consegna in italiano con la procedura di test.
 
 ## 10. Lezioni di compilazione (in ordine, tutte le sessioni)
 
