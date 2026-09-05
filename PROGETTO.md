@@ -36,7 +36,7 @@ Risorsa da build: `app/build/outputs/apk/debug/app-debug.apk`.
 
 La UI è tutta **Jetpack Compose + Material 3**; il dato è un modello
 serializzabile puro (`kotlinx.serialization`), nessun database locale
-(Room 2.6.1 è dichiarata nel gradle ma non usata).
+(Room e kapt, dichiarati ma mai usati, sono stati rimossi dopo la v1.9).
 
 ## 2. Funzionalità (stato v1.9)
 
@@ -59,7 +59,7 @@ serializzabile puro (`kotlinx.serialization`), nessun database locale
 | Lingua | Kotlin **1.9.24** |
 | UI | Jetpack Compose **1.6.0** (BOM 2024.01.00) + Compose Compiler **1.5.14** + Material3 (BOM) + `com.google.android.material:1.11.0` |
 | Build | AGP **8.3.2**, Gradle **8.6** (wrapper), JDK **17** (Temurin 17.0.20), Android platform **34** |
-| Dati | `kotlinx-serialization-json` 1.6.3, coroutines 1.8.0, lifecycle 2.7.0, activity 1.8.2 |
+| Dati | `kotlinx-serialization-json` 1.6.3, coroutines 1.8.0, lifecycle 2.7.0, activity 1.8.2 — **nessun annotation processor** (kapt rimosso dopo la v1.9) |
 | Immagini | Coil **2.5.0** (`AsyncImage`) |
 | Target | minSdk **26**, targetSdk **34** |
 | Versione app | **1.9** (versionCode **10**), `applicationId` `it.zibaldone.app` |
@@ -342,6 +342,33 @@ export ANDROID_HOME=$HOME/android-sdk
 22. `drawCircle`/`drawLine`/`drawPath` sono **membro di `DrawScope`**
     (niente import); `Stroke` e `Path` servono gli import
     `drawscope.Stroke` / `graphics.Path`
+
+## 10.1 Pulizia dopo la v1.9 — via Room e kapt
+
+Room 2.6.1 (`room-runtime`, `room-ktx`, `room-compiler` via kapt) era
+dichiarata in `app/build.gradle.kts` **fin dalla v1.0 e non è mai stata
+usata**: in tutto `app/src` non esiste un `@Entity`, un `@Dao` né un
+`@Database`. Il costo non era il peso ma il tempo di build: il solo
+plugin `kotlin-kapt` aggiunge `kaptGenerateStubsDebugKotlin` e
+`kaptDebugKotlin` a ogni compilazione, anche quando non c'è nulla da
+processare.
+
+Misurato su build pulite consecutive (`:app:clean` + `:app:assembleDebug
+--offline`), stessa macchina, daemon riavviato:
+
+| | Con Room + kapt | Senza | Differenza |
+|---|---|---|---|
+| Tempo build pulita | 16,8 s | 14,7 s | **−2,1 s (−12%)** |
+| Task eseguiti | 37 | 34 | −3 |
+| APK | 19.995.908 byte | 19.842.038 byte | **−150 KB** |
+
+Verificato dopo la rimozione: **0** riferimenti a `androidx.room` nei
+dex, 301 a `zibaldone` (l'app è intatta), `ktlintCheck` verde.
+
+Rimossa nella stessa occasione anche la spazzatura locale: `app/build/`
+(167 MB) e `.gradle/` (3,4 MB), entrambe rigenerabili, e le cartelle
+`res/drawable/` e `res/layout/` — vuote fin dall'inizio e mai
+referenziate, perché l'app è interamente Compose.
 
 ## 11. Cronologia versioni e root cause
 
@@ -653,7 +680,12 @@ Note:
   `Elimina` e `Svuota` idem.
 - Nessun **selettore colore** (tratti e testo fissi a nero; il modello ha
   già il campo `color` — basta un slider).
-- **Un solo board** per sessione; Room è dichiarata ma non usata.
+- **Un solo board** per sessione, tenuto in memoria nel ViewModel: non
+  c'è persistenza automatica, si salva solo esportando un `.zib`.
+  ~~Room è dichiarata ma non usata~~ → **rimossa dopo la v1.9** insieme
+  a kapt. Se un giorno servisse la persistenza, valutare prima
+  `DataStore` o la semplice serializzazione del manifest su file: il
+  modello è già interamente serializzabile.
 - ~~`rotation` delle foto è persistita ma non esposta in UI~~ →
   **fatto in v1.8** (doppio tocco → frecce curve). Resta che a rotazioni
   non multiple di 90° la foto sporge dal riquadro di selezione e l'area

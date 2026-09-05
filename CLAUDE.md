@@ -48,5 +48,5 @@ There are no test sources in this repo (`app/src/test`, `app/src/androidTest` do
 
 ## Gotchas
 
-- Room (with kapt) is a declared dependency but is **unused** — there is no local database in this app. Don't assume one exists.
+- There is **no local database** and no annotation processor. Room and `kotlin-kapt` were declared but never used, and were removed in v1.9 — don't reintroduce kapt without need: it adds two stub-generation tasks to every compile.
 - `.zib` export format (ZIP: `manifest.json` + `media/*.jpg`) has intentionally never changed across versions for backward compatibility — don't alter it without a strong reason, and document any change in PROGETTO.md. Only the suggested extension changed in v1.9 (was `.mboard`); the archive layout is identical and old files still import, since the picker accepts `*/*`.
