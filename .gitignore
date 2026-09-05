@@ -1,0 +1,26 @@
+# Build output
+build/
+app/build/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Gradle
+.gradle/
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Signing material — never commit these
+*.jks
+*.keystore
+
+# OS
+.DS_Store
+Thumbs.db
