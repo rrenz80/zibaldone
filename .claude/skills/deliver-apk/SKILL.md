@@ -23,7 +23,7 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
 
 5. **Update PROGETTO.md.** Append a new section documenting this version: symptoms (what was wrong / what changed), root cause, and fix. Match the style and Italian language of existing entries. Also update the version table (§11), the dex markers (§12), and the "file di consegna" line (§15).
 
-6. **Commit and tag.** The repo is `rrenz80/zibaldone` (private, remote `origin`, branch `main`). Do this only after the build succeeded and the dex check passed — a tag must always point at a version that actually built.
+6. **Commit and tag — after asking.** Stop and ask the user before running any of this; their approval of the release itself is not approval to publish it. The repo is `rrenz80/zibaldone` (private, remote `origin`, branch `main`). Do this only after the build succeeded and the dex check passed — a tag must always point at a version that actually built.
 
    ```bash
    cd ~/zibaldone
@@ -51,8 +51,9 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
    If the tag already exists, the version was never bumped — go back to step 1 rather
    than moving or force-pushing the tag. Never rewrite a tag that has been pushed.
 
-7. **Publish the GitHub release with the APK attached.** The tag alone carries the
-   source; the release is what makes the installable downloadable.
+7. **Publish the GitHub release with the APK attached — after asking.** The tag alone
+   carries the source; the release is what makes the installable downloadable. Ask
+   before publishing: a release is visible work, not a local step.
 
    ```bash
    gh release create v<versionName> ~/Zibaldone-v<versionName>.apk \

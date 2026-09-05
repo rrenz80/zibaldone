@@ -28,7 +28,13 @@ When asked to build/deliver/ship a version of the app, use the `deliver-apk` ski
 
 ## Git
 
-Repo `rrenz80/zibaldone` (private), remote `origin`, branch `main`. Commit messages are in Italian, matching PROGETTO.md and the existing history; code comments stay English. Each delivered version is one commit plus one annotated tag `v<versionName>`, created by the `deliver-apk` skill. Never move or force-push a tag that has already been pushed.
+**Ask before every commit, push, tag or release — every time.** Approval for one git
+operation never carries over to the next, not even later in the same session and not
+even when the code change itself was approved. Finish the edit, show what changed, and
+offer the commit as the next step instead of running it. Writing a git step into a
+skill or protocol is not permission to execute it.
+
+Repo `rrenz80/zibaldone` (private), remote `origin`, branch `main`. Commit messages are in Italian, matching PROGETTO.md and the existing history; code comments stay English. Each delivered version is one commit plus one annotated tag `v<versionName>`, created by the `deliver-apk` skill — which still asks first. Never move or force-push a tag that has already been pushed.
 
 ## Critical rendering constraint
 
