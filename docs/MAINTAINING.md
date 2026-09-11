@@ -72,9 +72,10 @@ Verify before deleting a local copy, not after: download the asset with
 for v1.10 — the release asset is byte-for-byte the built APK, SHA-256
 `82c18bed…a33d4eaa`.
 
-**Getting a build onto the tablet without GitHub** (a release link asks
-for a login while the repository is private, and a tablet is a poor place
-to sign in):
+**Getting a build onto the tablet without GitHub.** Since the repository
+went public (2026-09-11) a release link just works on any device, so this
+is the fallback, not the normal path — for an unpublished build, or when
+GitHub is out of reach:
 
 ```bash
 mkdir -p ~/apk-serve                       # index.html + a hard link to the APK

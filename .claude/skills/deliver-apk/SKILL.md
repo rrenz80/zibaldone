@@ -75,9 +75,9 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
      --jq '.assets[] | "\(.name) — \(.size) byte"'
    ```
 
-   While the repo is private the download link asks for a GitHub login — fine on a
-   device already signed in, awkward otherwise; once it is public the link just works.
-   When a login is in the way, serve the APK over Tailscale instead (bind to the
-   tailnet address only, never `0.0.0.0`) and take the server down afterwards.
+   The repo is public, so the download link works on any device with no login.
+   Serve the APK over Tailscale instead only when GitHub is out of reach or the
+   build is not meant to be published (bind to the tailnet address only, never
+   `0.0.0.0`) and take the server down afterwards.
 
 8. **Deliver in the user's language.** Reply to the user — in Italian, the language they write in, even though everything written *into* the repo is English — with a delivery message describing the manual test procedure for verifying the fix/feature on-device. Give the release link and the tag.

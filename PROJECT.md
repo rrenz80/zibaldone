@@ -704,6 +704,10 @@ resource, so the device rule of §14 stands untouched.
 
 - Build: `:app:clean :app:assembleDebug` → **BUILD SUCCESSFUL** (v1.10).
 - Lint: `:app:ktlintCheck` → **BUILD SUCCESSFUL** (v1.10).
+- **On the tablet (2026-09-11, v1.10): the checklist below passes.** The
+  language switch keeps the board — elements, camera and selection all
+  survive the `recreate()` — and the UI, the hints and the toasts follow
+  the chosen language.
 - Dex (verified over every `classes*.dex`):
   | v | grep marker |
   |---|---|
