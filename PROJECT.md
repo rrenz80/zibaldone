@@ -840,11 +840,13 @@ resource, so the device rule of §14 stands untouched.
   stroke is a composable — if this ever becomes a bottleneck, optimise
   with batching or a `drawBehind` in an "already transformed" canvas for
   the static part only.
-- **No screenshots in the README** (pending): for an app repository this
-  is the single thing that turns a visitor into someone who clones it.
-  Needs 2–3 captures from the tablet — a board with strokes, notes and
-  photos; the rotation arrows; the language menu — committed under
-  `docs/` and linked from the README.
+- **README screenshots**: `docs/screenshot-board.jpg` (a photo in
+  rotation mode, a freehand stroke, a note) and
+  `docs/screenshot-language-menu.jpg` (the language menu open). Both are
+  captures from the tablet with the EXIF stripped before committing —
+  screenshots carry a capture timestamp, and the repository is meant to
+  go public. Nothing shows the Italian UI yet; a third capture would
+  close that, but nothing depends on it.
 
 ## 14. Device findings (the user's tablet, Compose 1.6.0) — the lesson
 

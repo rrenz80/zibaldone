@@ -9,6 +9,13 @@ text notes and reference photos, all on a surface you pan and zoom with your fin
 A *zibaldone* is the notebook where notes, clippings and stray thoughts pile up with
 no predetermined order — a moodboard made of paper.
 
+<p align="center">
+  <img src="docs/screenshot-board.jpg" width="360"
+       alt="A board holding a rotated photo in rotation mode — four curved blue arrows at its corners, the unrotated selection frame behind it — a freehand arrow drawn next to it and a text note below. The bottom hint reads: drag an arrow to rotate, snaps to 0/90/180/270 degrees, tap elsewhere to exit.">
+  <img src="docs/screenshot-language-menu.jpg" width="360"
+       alt="The language menu open from the globe icon in the top bar, listing System default, Italiano and English, with a check mark on English.">
+</p>
+
 ## What it does
 
 - **Three tools**: Select, Pen (2–24 dp width), Eraser with adjustable radius
