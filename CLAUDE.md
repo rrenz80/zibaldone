@@ -16,7 +16,9 @@ export ANDROID_HOME=$HOME/android-sdk
 ./gradlew :app:clean :app:assembleDebug --console=plain --offline
 ```
 
-The `--offline` flag is intentional — dependencies are expected to already be cached locally.
+The `--offline` flag is intentional — dependencies are expected to already be cached locally. A **release** build (`:app:assembleRelease`) can't use it the first time: `lintVitalRelease` fetches `lint-gradle`.
+
+Release signing reads `keystore.properties` at the repo root (gitignored, keystore itself in `~/keystores/`). If that file is missing the release APK is simply left unsigned — don't "fix" that by committing credentials or by failing the build. The release key is not the debug key, so a release-signed APK won't install over the debug-signed builds delivered up to v1.10 without uninstalling first. CI (`.github/workflows/ci.yml`) runs ktlintCheck + assembleDebug, without `--offline`.
 
 ## Linting
 

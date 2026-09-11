@@ -282,6 +282,48 @@ export ANDROID_HOME=$HOME/android-sdk
 ./gradlew :app:clean :app:assembleDebug --console=plain --offline
 ```
 
+`--offline` is deliberate: the dependencies are expected to be in the local
+Gradle cache already. A release build cannot run offline the first time —
+`lintVitalRelease` pulls `com.android.tools.lint:lint-gradle`, which is not in
+the cache until it has been fetched once.
+
+### 9.2.1 Release build and signing
+
+```bash
+./gradlew :app:assembleRelease --console=plain
+# -> app/build/outputs/apk/release/app-release.apk
+```
+
+The signing material is **not** in the repository: `keystore.properties` at the
+repo root is gitignored and points at a keystore kept in `~/keystores/`. When
+that file is missing — a fresh clone, a CI runner — the release build is left
+**unsigned** rather than failing, so nobody needs the maintainer's key to build
+the project.
+
+| | |
+|---|---|
+| Keystore | `~/keystores/zibaldone-release.p12` (PKCS12, RSA 4096, valid until 2054) |
+| Alias | `zibaldone`, DN `CN=Zibaldone, O=Zibaldone, C=IT` |
+| Credentials | `keystore.properties` (gitignored, mode 600) |
+| Verified with | `apksigner verify --print-certs` → v2 scheme, 1 signer, SHA-256 `18fcd9b1…72dda8e9` |
+
+`isMinifyEnabled` stays **false** in release: `kotlinx.serialization` resolves
+the serializers of the sealed `BoardElement` hierarchy reflectively, and turning
+R8 on without keep rules and a full on-device pass would be a silent risk for no
+real gain at this size.
+
+**The release key is not the debug key.** An APK signed this way cannot be
+installed over a debug-signed Zibaldone (v1.10 and earlier): Android refuses the
+update, and the app has to be uninstalled first — which also drops the images
+imported into `filesDir`. Export any board you care about as a `.zib` before
+switching a device from a debug build to a release one.
+
+### 9.2.2 Continuous integration
+
+`.github/workflows/ci.yml` runs `:app:ktlintCheck` then `:app:assembleDebug` on
+every push to `main` and every pull request, and uploads the debug APK as a
+build artifact. No `--offline` there: a runner has to download its dependencies.
+
 ### 9.3 Delivery protocol (applied to every version)
 1. `app/build.gradle.kts`: **`versionCode` +1 and `versionName` → a new
    label** (mandatory: a file with the same name on the tablet does not
@@ -798,6 +840,11 @@ resource, so the device rule of §14 stands untouched.
   stroke is a composable — if this ever becomes a bottleneck, optimise
   with batching or a `drawBehind` in an "already transformed" canvas for
   the static part only.
+- **No screenshots in the README** (pending): for an app repository this
+  is the single thing that turns a visitor into someone who clones it.
+  Needs 2–3 captures from the tablet — a board with strokes, notes and
+  photos; the rotation arrows; the language menu — committed under
+  `docs/` and linked from the README.
 
 ## 14. Device findings (the user's tablet, Compose 1.6.0) — the lesson
 
@@ -832,16 +879,16 @@ talking about a bug.
 
 ## 15. Delivery files
 
-- **One installable under `~/` only** (a rule required by the user):
-  - currently **`/home/lorenzo/Zibaldone-v1.10.apk`** (~19 MB)
+- **One installable under `~/` only** (a rule required by the maintainer):
+  - currently **`~/Zibaldone-v1.10.apk`** (~19 MB)
   - the downstream build APK: `app/build/outputs/apk/debug/app-debug.apk`
 - **Trying a build over Tailscale** (when a build has to reach the
-  tablet): `/home/lorenzo/apk-serve/` holds an `index.html` plus a hard
-  link to the APK in `~/`, served with
-  `python3 -m http.server 8299 --bind 100.113.89.89 --directory /home/lorenzo/apk-serve`
-  (bound to the Tailscale IP **only**, never the LAN). For a new build,
-  replace the hard link and the link in the page; port 8299 is the one
-  already used for this purpose in the past.
+  tablet): `~/apk-serve/` holds an `index.html` plus a hard link to the
+  APK in `~/`, served with
+  `python3 -m http.server 8299 --bind <tailnet-ip> --directory ~/apk-serve`
+  (bound to the Tailscale address **only**, never `0.0.0.0`). For a new
+  build, replace the hard link and the link in the page; port 8299 is the
+  one already used for this purpose.
 - Installing: copy it to the tablet, tap it, `Accept` the "install
   unknown source" prompt (the debug signature is the same across all
   versions → it overwrites).

@@ -1,0 +1,42 @@
+name: CI
+
+# Checks every push to main and every pull request: the same two commands the
+# project uses locally, in the same order. Note the absence of --offline: the
+# local build relies on an already-populated Gradle cache, a CI runner has to
+# download its dependencies.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ktlint + debug build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Lint (ktlint)
+        run: ./gradlew :app:ktlintCheck --console=plain
+
+      - name: Build debug APK
+        run: ./gradlew :app:assembleDebug --console=plain
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: zibaldone-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

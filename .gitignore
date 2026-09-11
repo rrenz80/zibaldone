@@ -24,3 +24,7 @@ captures/
 # OS
 .DS_Store
 Thumbs.db
+
+# Release signing credentials — the keystore itself lives outside the repo
+keystore.properties
+*.p12

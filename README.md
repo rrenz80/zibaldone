@@ -1,5 +1,8 @@
 # Zibaldone
 
+[![CI](https://github.com/rrenz80/zibaldone/actions/workflows/ci.yml/badge.svg)](https://github.com/rrenz80/zibaldone/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 An Android app for building moodboards on an **infinite canvas**: freehand drawing,
 text notes and reference photos, all on a surface you pan and zoom with your fingers.
 
@@ -39,6 +42,18 @@ Code style is enforced with ktlint:
 ./gradlew :app:ktlintFormat   # fix what can be fixed
 ```
 
+`./gradlew :app:assembleRelease` also works from a fresh clone, and produces an
+**unsigned** release APK. Signing is opt-in: create a `keystore.properties` at
+the repo root (it is gitignored) pointing at your own keystore, and the release
+build picks it up.
+
+```properties
+storeFile=/path/to/your/keystore.p12
+storePassword=…
+keyAlias=…
+keyPassword=…
+```
+
 ## Structure
 
 A single `:app` module, entirely Jetpack Compose + Material 3. No database: the state
@@ -63,6 +78,10 @@ Two constraints that are not obvious from the code:
    closure or through `graphicsLayer` was tried and does not work on the reference
    tablet.
 2. **Every gesture lives in `BoardGesture.kt`**: nodes have no handlers of their own.
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
 
 ## Documentation
 

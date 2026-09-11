@@ -1,3 +1,22 @@
+import java.util.Properties
+
+/**
+ * Release signing material.
+ *
+ * `keystore.properties` sits at the repo root and is gitignored; the keystore
+ * it points at lives outside the repository entirely. When the file is absent
+ * — a fresh clone, or CI — the release build is left UNSIGNED instead of
+ * failing: nobody should need the maintainer's key to run `assembleRelease`.
+ * Debug builds are unaffected and keep using the standard debug key.
+ */
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties =
+    Properties().apply {
+        if (keystorePropertiesFile.exists()) {
+            keystorePropertiesFile.inputStream().use { load(it) }
+        }
+    }
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -21,13 +40,29 @@ android {
         versionName = "1.10"
     }
 
+    signingConfigs {
+        if (keystoreProperties.containsKey("storeFile")) {
+            create("release") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            // Left off deliberately: kotlinx.serialization resolves its
+            // serializers reflectively for the sealed BoardElement hierarchy,
+            // and turning R8 on without keep rules and a full on-device pass
+            // would be a silent risk for no real gain at this size.
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.findByName("release")
         }
     }
     compileOptions {
