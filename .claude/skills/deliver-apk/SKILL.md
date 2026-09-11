@@ -1,11 +1,11 @@
 ---
 name: deliver-apk
-description: Build and deliver a new APK version of Zibaldone (the moodboard app) following the project's strict delivery protocol (PROGETTO.md §9.3). Use whenever the user asks to build, deliver, ship, or release a new version/APK of the app — not for a plain dev/debug build with no delivery intent.
+description: Build and deliver a new APK version of Zibaldone (the moodboard app) following the project's strict delivery protocol (PROJECT.md §9.3). Use whenever the user asks to build, deliver, ship, or release a new version/APK of the app — not for a plain dev/debug build with no delivery intent.
 ---
 
 Follow every step below, in order, for any request to build/deliver/ship a version of this app. Do not skip steps or substitute a plain `assembleDebug` — the debug signature is identical across builds, so skipping the version bump means the app on the tablet silently fails to update even though the file looks new.
 
-Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Every delivered version gets exactly one commit, one tag and one GitHub release carrying the APK, so `versionCode`, the PROGETTO.md changelog, the git history and the downloadable installable never drift apart.
+Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Every delivered version gets exactly one commit, one tag and one GitHub release carrying the APK, so `versionCode`, the PROJECT.md changelog, the git history and the downloadable installable never drift apart.
 
 1. **Bump the version.** In `app/build.gradle.kts`, increment `versionCode` by 1 and give `versionName` a new label. Confirm what changed in this release before picking the label.
 
@@ -21,7 +21,7 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
 
 4. **Verify the dex.** Unzip the new APK and run `strings | grep -c <new-symbol>` against **every** `classes*.dex` file inside it (D8 splits code across multiple dex buckets, so the new symbol may not land in `classes.dex` alone). Use a symbol name that's actually new in this change (a new method/class name introduced by the fix). Report the count found per dex file — don't just claim success without showing this.
 
-5. **Update PROGETTO.md.** Append a new section documenting this version: symptoms (what was wrong / what changed), root cause, and fix. Match the style and language (English, since v1.10) of existing entries. Also update the version table (§11), the dex markers (§12), and the "Delivery files" line (§15).
+5. **Update PROJECT.md.** Append a new section documenting this version: symptoms (what was wrong / what changed), root cause, and fix. Match the style and language (English, since v1.10) of existing entries. Also update the version table (§11), the dex markers (§12), and the "Delivery files" line (§15).
 
 6. **Commit and tag — after asking.** Stop and ask the user before running any of this; their approval of the release itself is not approval to publish it. The repo is `rrenz80/zibaldone` (private, remote `origin`, branch `main`). Do this only after the build succeeded and the dex check passed — a tag must always point at a version that actually built.
 
@@ -39,7 +39,7 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
    Commit message in **English** (the repo's written language since v1.10 — the
    history before that is Italian and stays as it is), subject line
    `v<versionName>: <what changes>`, then a body explaining what changed
-   and why — the same substance as the PROGETTO.md entry, condensed. End it with the
+   and why — the same substance as the PROJECT.md entry, condensed. End it with the
    attribution footer this session was given.
 
    Then an **annotated** tag on that commit and a push of both:

@@ -66,6 +66,6 @@ Two constraints that are not obvious from the code:
 
 ## Documentation
 
-[`PROGETTO.md`](PROGETTO.md) is the project log: architecture, a version history with
+[`PROJECT.md`](PROJECT.md) is the project log: architecture, a version history with
 the symptoms and root cause of every bug that was fixed, build lessons and known
 limitations. It is the authoritative source; code comments are in English too.
