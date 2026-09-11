@@ -1,8 +1,12 @@
 package it.zibaldone.app.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,12 +20,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -49,6 +58,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import it.zibaldone.app.R
 import it.zibaldone.app.model.BoardElement
+import it.zibaldone.app.util.AppLocale
+import it.zibaldone.app.util.LocalePreference
 import it.zibaldone.app.view.BoardTool
 import it.zibaldone.app.view.BoardViewModel
 
@@ -127,7 +138,7 @@ fun BoardScreen(viewModel: BoardViewModel = viewModel()) {
                 title = { Text(text = stringResource(R.string.app_name)) },
                 actions = {
                     TextButton(onClick = { showClearDialog = true }) {
-                        Text("Svuota")
+                        Text(stringResource(R.string.action_clear))
                     }
                     TextButton(
                         enabled = selectedId != null,
@@ -136,7 +147,7 @@ fun BoardScreen(viewModel: BoardViewModel = viewModel()) {
                             if (id != null) viewModel.removeElement(id)
                         }
                     ) {
-                        Text("Elimina")
+                        Text(stringResource(R.string.action_delete))
                     }
                     TextButton(
                         enabled = canvasSize != IntSize.Zero,
@@ -148,21 +159,22 @@ fun BoardScreen(viewModel: BoardViewModel = viewModel()) {
                             )
                         }
                     ) {
-                        Text("Centra")
+                        Text(stringResource(R.string.action_center))
                     }
                     TextButton(onClick = { viewModel.resetView() }) {
-                        Text("Azzera")
+                        Text(stringResource(R.string.action_reset))
                     }
                     TextButton(onClick = {
                         importLauncher.launch(arrayOf("*/*"))
                     }) {
-                        Text("Importa")
+                        Text(stringResource(R.string.action_import))
                     }
                     TextButton(onClick = {
                         exportLauncher.launch("board.zib")
                     }) {
-                        Text("Esporta")
+                        Text(stringResource(R.string.action_export))
                     }
+                    LanguageMenu()
                 },
             )
         },
@@ -178,29 +190,29 @@ fun BoardScreen(viewModel: BoardViewModel = viewModel()) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         ToolButton(
-                            label = "Seleziona",
+                            label = stringResource(R.string.tool_select),
                             active = viewModel.tool == BoardTool.SELECT
                         ) { viewModel.tool = BoardTool.SELECT }
                         ToolButton(
-                            label = "Penna",
+                            label = stringResource(R.string.tool_pen),
                             active = viewModel.tool == BoardTool.PEN
                         ) { viewModel.tool = BoardTool.PEN }
                         ToolButton(
-                            label = "Gomma",
+                            label = stringResource(R.string.tool_eraser),
                             active = viewModel.tool == BoardTool.ERASER
                         ) { viewModel.tool = BoardTool.ERASER }
                     }
                     when (viewModel.tool) {
                         BoardTool.PEN ->
                             SizeSlider(
-                                label = "Spessore penna",
+                                label = stringResource(R.string.slider_pen_width),
                                 value = viewModel.penWidthDp,
                                 range = 2f..24f
                             ) { viewModel.penWidthDp = it }
 
                         BoardTool.ERASER ->
                             SizeSlider(
-                                label = "Dimensione gomma",
+                                label = stringResource(R.string.slider_eraser_size),
                                 value = viewModel.eraserRadiusDp,
                                 range = 12f..64f
                             ) { viewModel.eraserRadiusDp = it }
@@ -214,20 +226,18 @@ fun BoardScreen(viewModel: BoardViewModel = viewModel()) {
                             ) {
                                 Text(
                                     text =
-                                        when {
-                                            selectedElement == null ->
-                                                "Tocca un elemento per selezionarlo · Trascina per spostarlo · " +
-                                                    "Doppio tocco: modifica una nota, ruota una foto"
-                                            viewModel.rotatingId == selectedElement.id ->
-                                                "Trascina una freccia per ruotare · Si aggancia a 0/90/180/270° · " +
-                                                    "Tocca altrove per uscire"
-                                            selectedElement is BoardElement.ImageNode ->
-                                                "Maniglie ai quattro angoli: ridimensiona · " +
-                                                    "Doppio tocco: ruota · Elimina in alto: rimuovi"
-                                            else ->
-                                                "Maniglie ai quattro angoli: ridimensiona · " +
-                                                    "Doppio tocco: modifica · Elimina in alto: rimuovi"
-                                        },
+                                        stringResource(
+                                            when {
+                                                selectedElement == null ->
+                                                    R.string.hint_nothing_selected
+                                                viewModel.rotatingId == selectedElement.id ->
+                                                    R.string.hint_rotating
+                                                selectedElement is BoardElement.ImageNode ->
+                                                    R.string.hint_image_selected
+                                                else ->
+                                                    R.string.hint_text_selected
+                                            }
+                                        ),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -244,16 +254,22 @@ fun BoardScreen(viewModel: BoardViewModel = viewModel()) {
                 FloatingActionButton(
                     onClick = { imagePicker.launch(arrayOf("image/*")) }
                 ) {
-                    Icon(Icons.Filled.AddAPhoto, contentDescription = "Aggiungi foto")
+                    Icon(
+                        Icons.Filled.AddAPhoto,
+                        contentDescription = stringResource(R.string.cd_add_photo)
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 FloatingActionButton(
                     onClick = {
                         val worldCenter = viewModel.screenToWorld(canvasCenterPx())
-                        viewModel.addText("Nuova nota", worldCenter)
+                        viewModel.addText(context.getString(R.string.default_note_text), worldCenter)
                     }
                 ) {
-                    Icon(Icons.Filled.Title, contentDescription = "Aggiungi nota")
+                    Icon(
+                        Icons.Filled.Title,
+                        contentDescription = stringResource(R.string.cd_add_note)
+                    )
                 }
             }
         },
@@ -327,27 +343,91 @@ fun BoardScreen(viewModel: BoardViewModel = viewModel()) {
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("Svuotare la board?") },
-            text = {
-                Text(
-                    "Tutti gli elementi verranno rimossi. " +
-                        "Esporta prima la board se vuoi conservarla."
-                )
-            },
+            title = { Text(stringResource(R.string.clear_dialog_title)) },
+            text = { Text(stringResource(R.string.clear_dialog_text)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         viewModel.clearBoard()
                         showClearDialog = false
                     }
-                ) { Text("Svuota") }
+                ) { Text(stringResource(R.string.action_clear)) }
             },
             dismissButton = {
-                TextButton(onClick = { showClearDialog = false }) { Text("Annulla") }
+                TextButton(onClick = { showClearDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
             }
         )
     }
 }
+
+/**
+ * Language picker in the top app bar.
+ *
+ * The choice is stored in the app preferences and applied by
+ * [it.zibaldone.app.util.LocalePreference] in `attachBaseContext`, so the
+ * only way to see it take effect is to recreate the activity: the board
+ * itself is untouched because the ViewModel is retained across it, just
+ * like on a rotation.
+ */
+@Composable
+private fun LanguageMenu() {
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+    val current = remember { LocalePreference.current(context) }
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                Icons.Filled.Language,
+                contentDescription = stringResource(R.string.action_language)
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            for (locale in AppLocale.entries) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(locale.labelRes())) },
+                    leadingIcon = {
+                        if (locale == current) {
+                            Icon(Icons.Filled.Check, contentDescription = null)
+                        }
+                    },
+                    onClick = {
+                        expanded = false
+                        if (locale != current) {
+                            LocalePreference.store(context, locale)
+                            context.findActivity()?.recreate()
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+
+/**
+ * The activity behind [this] context: `LocalContext` is normally the
+ * activity itself, but Compose may hand out a themed wrapper, so the
+ * wrapper chain is walked instead of a plain cast.
+ */
+private fun Context.findActivity(): Activity? {
+    var current = this
+    while (current is ContextWrapper) {
+        if (current is Activity) return current
+        current = current.baseContext
+    }
+    return null
+}
+
+/** The menu label for this language, written in the language itself. */
+@StringRes
+private fun AppLocale.labelRes(): Int =
+    when (this) {
+        AppLocale.SYSTEM -> R.string.language_system
+        AppLocale.ITALIAN -> R.string.language_italian
+        AppLocale.ENGLISH -> R.string.language_english
+    }
 
 /** A tool toggle in the bottom bar: filled when active. */
 @Composable

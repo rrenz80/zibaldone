@@ -23,10 +23,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import it.zibaldone.app.R
 import it.zibaldone.app.model.BoardElement
 import it.zibaldone.app.view.BoardViewModel
 import it.zibaldone.app.view.CameraState
@@ -289,7 +291,7 @@ private fun BoxScope.RotateArrow(
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.RotateRight,
-            contentDescription = "Ruota",
+            contentDescription = stringResource(R.string.cd_rotate),
             tint = Color.White,
             modifier = Modifier.size(20.dp)
         )

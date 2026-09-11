@@ -1,3 +1,52 @@
 <resources>
     <string name="app_name">Zibaldone</string>
+
+    <!-- Top app bar -->
+    <string name="action_clear">Clear</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_center">Center</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_import">Import</string>
+    <string name="action_export">Export</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Language picker -->
+    <string name="action_language">Language</string>
+    <string name="language_system">System default</string>
+    <string name="language_italian">Italiano</string>
+    <string name="language_english">English</string>
+
+    <!-- Tools -->
+    <string name="tool_select">Select</string>
+    <string name="tool_pen">Pen</string>
+    <string name="tool_eraser">Eraser</string>
+    <string name="slider_pen_width">Pen width</string>
+    <string name="slider_eraser_size">Eraser size</string>
+
+    <!-- Contextual hints in the bottom bar -->
+    <string name="hint_nothing_selected">Tap an element to select it · Drag to move it · Double tap: edit a note, rotate a photo</string>
+    <string name="hint_rotating">Drag an arrow to rotate · Snaps to 0/90/180/270° · Tap elsewhere to exit</string>
+    <string name="hint_image_selected">Handles at the four corners: resize · Double tap: rotate · Delete above: remove</string>
+    <string name="hint_text_selected">Handles at the four corners: resize · Double tap: edit · Delete above: remove</string>
+
+    <!-- Nodes -->
+    <string name="cd_add_photo">Add photo</string>
+    <string name="cd_add_note">Add note</string>
+    <string name="cd_rotate">Rotate</string>
+    <string name="default_note_text">New note</string>
+
+    <!-- Clear confirmation -->
+    <string name="clear_dialog_title">Clear the board?</string>
+    <string name="clear_dialog_text">Every element will be removed. Export the board first if you want to keep it.</string>
+
+    <!-- Toasts -->
+    <string name="toast_image_import_failed">Could not import the image</string>
+    <string name="toast_export_ok">Board exported</string>
+    <plurals name="toast_export_missing_media">
+        <item quantity="one">Board exported, but %1$d image was not found</item>
+        <item quantity="other">Board exported, but %1$d images were not found</item>
+    </plurals>
+    <string name="toast_export_error">Error during the export</string>
+    <string name="toast_import_ok">Board imported</string>
+    <string name="toast_import_error">Error during the import</string>
 </resources>

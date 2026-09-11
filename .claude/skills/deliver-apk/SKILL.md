@@ -21,7 +21,7 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
 
 4. **Verify the dex.** Unzip the new APK and run `strings | grep -c <new-symbol>` against **every** `classes*.dex` file inside it (D8 splits code across multiple dex buckets, so the new symbol may not land in `classes.dex` alone). Use a symbol name that's actually new in this change (a new method/class name introduced by the fix). Report the count found per dex file — don't just claim success without showing this.
 
-5. **Update PROGETTO.md.** Append a new section documenting this version: symptoms (what was wrong / what changed), root cause, and fix. Match the style and Italian language of existing entries. Also update the version table (§11), the dex markers (§12), and the "file di consegna" line (§15).
+5. **Update PROGETTO.md.** Append a new section documenting this version: symptoms (what was wrong / what changed), root cause, and fix. Match the style and language (English, since v1.10) of existing entries. Also update the version table (§11), the dex markers (§12), and the "Delivery files" line (§15).
 
 6. **Commit and tag — after asking.** Stop and ask the user before running any of this; their approval of the release itself is not approval to publish it. The repo is `rrenz80/zibaldone` (private, remote `origin`, branch `main`). Do this only after the build succeeded and the dex check passed — a tag must always point at a version that actually built.
 
@@ -36,8 +36,9 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
    covers them, but confirm rather than assume. If unrelated work-in-progress is
    also modified, ask before sweeping it into the release commit.
 
-   Commit message in **Italian** (matching the existing history and PROGETTO.md),
-   subject line `v<versionName>: <cosa cambia>`, then a body explaining what changed
+   Commit message in **English** (the repo's written language since v1.10 — the
+   history before that is Italian and stays as it is), subject line
+   `v<versionName>: <what changes>`, then a body explaining what changed
    and why — the same substance as the PROGETTO.md entry, condensed. End it with the
    attribution footer this session was given.
 
@@ -62,7 +63,7 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
      -F <file-con-le-note>
    ```
 
-   Release notes in **Italian**, written for someone installing on the tablet, not for
+   Release notes in **English**, written for someone installing on the tablet, not for
    a developer: what changed, and what to check. Reuse the manual test procedure from
    step 8 rather than writing it twice. Pass them via `-F` from a file (a scratchpad
    file is fine) — heredocs through `-n` mangle multi-line text.
@@ -78,4 +79,4 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
    on a device already signed in; if the user needs a link that just works, serve the
    APK over Tailscale instead (bind to the tailnet IP only, never `0.0.0.0`).
 
-8. **Deliver in Italian.** Reply to the user with a delivery message in Italian describing the manual test procedure for verifying the fix/feature on-device. Give the release link and the tag.
+8. **Deliver in the user's language.** Reply to the user — in Italian, the language they write in, even though everything written *into* the repo is English — with a delivery message describing the manual test procedure for verifying the fix/feature on-device. Give the release link and the tag.

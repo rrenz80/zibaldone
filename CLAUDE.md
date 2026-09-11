@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**Zibaldone** — a single-module Android moodboard app (Kotlin + Jetpack Compose, Material3), package `it.zibaldone.app`. No other modules, no backend. The app was renamed from "Moodboard" in v1.9; the UI is in Italian. The authoritative project log — architecture decisions, version history, known limitations — lives in `PROGETTO.md` at the repo root and is written in Italian; source comments/KDoc are in English.
+**Zibaldone** — a single-module Android moodboard app (Kotlin + Jetpack Compose, Material3), package `it.zibaldone.app`. No other modules, no backend. The app was renamed from "Moodboard" in v1.9; since v1.10 the UI ships in **Italian and English**, picked in-app. The authoritative project log — architecture decisions, version history, known limitations — lives in `PROGETTO.md` at the repo root. Everything written into this repo — that log, the README, code comments/KDoc, commit messages, release notes — is in **English**, so the project reads as one piece for an international audience. (The git history before v1.10 and the release notes up to v1.9 are in Italian; they are left as they are.)
 
 ## Build
 
@@ -24,7 +24,7 @@ ktlint is configured via the `org.jlleitschuh.gradle.ktlint` Gradle plugin. Run 
 
 ## Delivering a build
 
-When asked to build/deliver/ship a version of the app, use the `deliver-apk` skill — it encodes the full release protocol from PROGETTO.md §9.3 (version bump, single-APK rule, dex verification, changelog entry, release commit + annotated tag, Italian test notes). Don't do a plain `assembleDebug` and call it delivered.
+When asked to build/deliver/ship a version of the app, use the `deliver-apk` skill — it encodes the full release protocol from PROGETTO.md §9.3 (version bump, single-APK rule, dex verification, changelog entry, release commit + annotated tag, test notes). Don't do a plain `assembleDebug` and call it delivered.
 
 ## Git
 
@@ -34,7 +34,13 @@ even when the code change itself was approved. Finish the edit, show what change
 offer the commit as the next step instead of running it. Writing a git step into a
 skill or protocol is not permission to execute it.
 
-Repo `rrenz80/zibaldone` (private), remote `origin`, branch `main`. Commit messages are in Italian, matching PROGETTO.md and the existing history; code comments stay English. Each delivered version is one commit plus one annotated tag `v<versionName>`, created by the `deliver-apk` skill — which still asks first. Never move or force-push a tag that has already been pushed.
+Repo `rrenz80/zibaldone` (private), remote `origin`, branch `main`. Commit messages are in English from v1.10 on (earlier history is Italian — don't rewrite it). Each delivered version is one commit plus one annotated tag `v<versionName>`, created by the `deliver-apk` skill — which still asks first. Never move or force-push a tag that has already been pushed.
+
+## UI strings (i18n)
+
+Every user-facing string lives in resources, never as a literal in Kotlin: `res/values/strings.xml` is **English** (default and fallback) and `res/values-it/strings.xml` is **Italian**. A new string goes in **both** files — a missing Italian entry silently falls back to English. Messages of internal exceptions stay as English literals: they never reach the user.
+
+The language choice (System default / Italiano / English) is persisted by `util/AppLocale.kt` and applied in `MainActivity.attachBaseContext`; the picker is the globe menu in the top bar. Don't reach for `AppCompatDelegate.setApplicationLocales` or `android:localeConfig` — PROGETTO.md §16 explains why this app can't use them.
 
 ## Critical rendering constraint
 

@@ -1,0 +1,48 @@
+<resources>
+    <!-- Barra superiore -->
+    <string name="action_clear">Svuota</string>
+    <string name="action_delete">Elimina</string>
+    <string name="action_center">Centra</string>
+    <string name="action_reset">Azzera</string>
+    <string name="action_import">Importa</string>
+    <string name="action_export">Esporta</string>
+    <string name="action_cancel">Annulla</string>
+
+    <!-- Scelta della lingua -->
+    <string name="action_language">Lingua</string>
+    <string name="language_system">Predefinita di sistema</string>
+
+    <!-- Strumenti -->
+    <string name="tool_select">Seleziona</string>
+    <string name="tool_pen">Penna</string>
+    <string name="tool_eraser">Gomma</string>
+    <string name="slider_pen_width">Spessore penna</string>
+    <string name="slider_eraser_size">Dimensione gomma</string>
+
+    <!-- Suggerimenti contestuali nella barra inferiore -->
+    <string name="hint_nothing_selected">Tocca un elemento per selezionarlo · Trascina per spostarlo · Doppio tocco: modifica una nota, ruota una foto</string>
+    <string name="hint_rotating">Trascina una freccia per ruotare · Si aggancia a 0/90/180/270° · Tocca altrove per uscire</string>
+    <string name="hint_image_selected">Maniglie ai quattro angoli: ridimensiona · Doppio tocco: ruota · Elimina in alto: rimuovi</string>
+    <string name="hint_text_selected">Maniglie ai quattro angoli: ridimensiona · Doppio tocco: modifica · Elimina in alto: rimuovi</string>
+
+    <!-- Nodi -->
+    <string name="cd_add_photo">Aggiungi foto</string>
+    <string name="cd_add_note">Aggiungi nota</string>
+    <string name="cd_rotate">Ruota</string>
+    <string name="default_note_text">Nuova nota</string>
+
+    <!-- Conferma di svuotamento -->
+    <string name="clear_dialog_title">Svuotare la board?</string>
+    <string name="clear_dialog_text">Tutti gli elementi verranno rimossi. Esporta prima la board se vuoi conservarla.</string>
+
+    <!-- Toast -->
+    <string name="toast_image_import_failed">Impossibile importare l\'immagine</string>
+    <string name="toast_export_ok">Board esportata</string>
+    <plurals name="toast_export_missing_media">
+        <item quantity="one">Board esportata, ma %1$d immagine non è stata trovata</item>
+        <item quantity="other">Board esportata, ma %1$d immagini non sono state trovate</item>
+    </plurals>
+    <string name="toast_export_error">Errore durante l\'esportazione</string>
+    <string name="toast_import_ok">Board importata</string>
+    <string name="toast_import_error">Errore durante l\'importazione</string>
+</resources>

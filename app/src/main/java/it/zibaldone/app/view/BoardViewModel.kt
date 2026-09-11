@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import it.zibaldone.app.R
 import it.zibaldone.app.model.BoardElement
 import it.zibaldone.app.model.BoardId
 import it.zibaldone.app.model.SerializablePoint
@@ -399,7 +400,11 @@ class BoardViewModel : ViewModel() {
                 elements.add(node)
                 selectedId = node.id
             }.onFailure {
-                Toast.makeText(context, "Impossibile importare l'immagine", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.toast_image_import_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -607,13 +612,21 @@ class BoardViewModel : ViewModel() {
                     if (saved.missingMedia > 0) {
                         // Never silent: the manifest still references these
                         // images, so the exported package is incomplete.
-                        "Board esportata, ma ${saved.missingMedia} immagini non sono state trovate"
+                        context.resources.getQuantityString(
+                            R.plurals.toast_export_missing_media,
+                            saved.missingMedia,
+                            saved.missingMedia
+                        )
                     } else {
-                        "Board esportata"
+                        context.getString(R.string.toast_export_ok)
                     }
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }.onFailure {
-                Toast.makeText(context, "Errore durante l'esportazione", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.toast_export_error),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -654,9 +667,17 @@ class BoardViewModel : ViewModel() {
                 camera.zoom = loaded.manifest.zoom
                 selectedId = null
                 editingTextId = null
-                Toast.makeText(context, "Board importata", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.toast_import_ok),
+                    Toast.LENGTH_SHORT
+                ).show()
             }.onFailure {
-                Toast.makeText(context, "Errore durante l'importazione", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.toast_import_error),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
