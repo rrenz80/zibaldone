@@ -686,6 +686,12 @@ Notes:
 - Verified with `aapt2 dump badging`: `package: name='it.zibaldone.app'`,
   `application-label:'Zibaldone'`. In the dex: **0** occurrences of
   `moodboard`.
+- **The v1.9 tag and GitHub release were deleted** while preparing the
+  repository to go public: it was a test build nobody outside this
+  machine had used (one download, by the maintainer). The commit
+  `f71ad21` and this section stay — the version is still part of the
+  history, it just has no downloadable artifact any more. v1.10 is
+  therefore the oldest tag.
 
 **v1.10 — the UI speaks two languages**
 

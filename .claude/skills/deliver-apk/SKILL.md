@@ -5,7 +5,7 @@ description: Build and deliver a new APK version of Zibaldone (the moodboard app
 
 Follow every step below, in order, for any request to build/deliver/ship a version of this app. Do not skip steps or substitute a plain `assembleDebug` — the debug signature is identical across builds, so skipping the version bump means the app on the tablet silently fails to update even though the file looks new.
 
-Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Every delivered version gets exactly one commit, one tag and one GitHub release carrying the APK, so `versionCode`, the PROJECT.md changelog, the git history and the downloadable installable never drift apart.
+Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Every delivered version gets exactly one commit, one tag and one GitHub release carrying the APK, so `versionCode`, the PROJECT.md changelog, the git history and the downloadable installable never drift apart. (A superseded test build may later have its tag and release deleted — v1.9 was — but that is a deliberate cleanup, never the state a delivery is left in.)
 
 1. **Bump the version.** In `app/build.gradle.kts`, increment `versionCode` by 1 and give `versionName` a new label. Confirm what changed in this release before picking the label.
 
