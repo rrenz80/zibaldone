@@ -1,6 +1,6 @@
 ---
 name: deliver-apk
-description: Build and deliver a new APK version of Zibaldone (the moodboard app) following the project's strict delivery protocol (PROJECT.md §9.3). Use whenever the user asks to build, deliver, ship, or release a new version/APK of the app — not for a plain dev/debug build with no delivery intent.
+description: Build and deliver a new APK version of Zibaldone (the moodboard app) following the project's strict delivery protocol (docs/MAINTAINING.md §2). Use whenever the user asks to build, deliver, ship, or release a new version/APK of the app — not for a plain dev/debug build with no delivery intent.
 ---
 
 Follow every step below, in order, for any request to build/deliver/ship a version of this app. Do not skip steps or substitute a plain `assembleDebug` — the debug signature is identical across builds, so skipping the version bump means the app on the tablet silently fails to update even though the file looks new.
@@ -21,9 +21,9 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
 
 4. **Verify the dex.** Unzip the new APK and run `strings | grep -c <new-symbol>` against **every** `classes*.dex` file inside it (D8 splits code across multiple dex buckets, so the new symbol may not land in `classes.dex` alone). Use a symbol name that's actually new in this change (a new method/class name introduced by the fix). Report the count found per dex file — don't just claim success without showing this.
 
-5. **Update PROJECT.md.** Append a new section documenting this version: symptoms (what was wrong / what changed), root cause, and fix. Match the style and language (English, since v1.10) of existing entries. Also update the version table (§11), the dex markers (§12), and the "Delivery files" line (§15).
+5. **Update PROJECT.md.** Append a new section documenting this version: symptoms (what was wrong / what changed), root cause, and fix. Match the style and language (English, since v1.10) of existing entries. Also update the version table (§11) and the dex markers (§12) in PROJECT.md, and the "Delivery files" notes in `docs/MAINTAINING.md` §3.
 
-6. **Commit and tag — after asking.** Stop and ask the user before running any of this; their approval of the release itself is not approval to publish it. The repo is `rrenz80/zibaldone` (private, remote `origin`, branch `main`). Do this only after the build succeeded and the dex check passed — a tag must always point at a version that actually built.
+6. **Commit and tag — after asking.** Stop and ask the user before running any of this; their approval of the release itself is not approval to publish it. The repo is `rrenz80/zibaldone` (remote `origin`, branch `main`). Do this only after the build succeeded and the dex check passed — a tag must always point at a version that actually built.
 
    ```bash
    cd ~/zibaldone
@@ -75,8 +75,9 @@ Steps 1–5 produce the build; steps 6–7 record it in git and publish it. Ever
      --jq '.assets[] | "\(.name) — \(.size) byte"'
    ```
 
-   The repo is **private**, so the download link asks for a GitHub login. That is fine
-   on a device already signed in; if the user needs a link that just works, serve the
-   APK over Tailscale instead (bind to the tailnet IP only, never `0.0.0.0`).
+   While the repo is private the download link asks for a GitHub login — fine on a
+   device already signed in, awkward otherwise; once it is public the link just works.
+   When a login is in the way, serve the APK over Tailscale instead (bind to the
+   tailnet address only, never `0.0.0.0`) and take the server down afterwards.
 
 8. **Deliver in the user's language.** Reply to the user — in Italian, the language they write in, even though everything written *into* the repo is English — with a delivery message describing the manual test procedure for verifying the fix/feature on-device. Give the release link and the tag.

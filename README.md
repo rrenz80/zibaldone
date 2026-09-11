@@ -95,3 +95,7 @@ MIT — see [`LICENSE`](LICENSE).
 [`PROJECT.md`](PROJECT.md) is the project log: architecture, a version history with
 the symptoms and root cause of every bug that was fixed, build lessons and known
 limitations. It is the authoritative source; code comments are in English too.
+
+[`docs/MAINTAINING.md`](docs/MAINTAINING.md) is the other half: how builds are made
+and delivered from the maintainer's machine to the tablet. Operational, and not
+needed to read or build the project.

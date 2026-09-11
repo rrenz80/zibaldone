@@ -1,7 +1,7 @@
 # Zibaldone — Project report
 
-**Status as of 2026-09-11:** v1.10 (build 11), built and delivered as
-`Zibaldone-v1.10.apk` (the only installable under `~/`).
+**Status as of 2026-09-11:** v1.10 (build 11), built and delivered as the
+`Zibaldone-v1.10.apk` asset of the v1.10 GitHub release.
 Build artifact: `app/build/outputs/apk/debug/app-debug.apk`.
 
 > **Name.** Up to v1.8 the app was called *Moodboard App*
@@ -39,7 +39,7 @@ Build artifact: `app/build/outputs/apk/debug/app-debug.apk`.
   net
 - **portable export/import** in a single `.zib` file (ZIP + manifest +
   media)
-- **Italian and English UI**, chosen inside the app (§16)
+- **Italian and English UI**, chosen inside the app (§15)
 
 The UI is entirely **Jetpack Compose + Material 3**; the data is a pure
 serializable model (`kotlinx.serialization`), with no local database
@@ -51,7 +51,7 @@ serializable model (`kotlinx.serialization`), with no local database
 |---|---|
 | Bottom toolbar | **Select** · **Pen** ("Pen width" slider, 2–24 dp) · **Eraser** ("Eraser size" slider, 12–64 dp). In Select mode the panel shows contextual hints, different depending on whether nothing is selected, a note is selected, a photo is selected, or a photo is being rotated |
 | FABs | **Photo** (SAF `image/*` picker, dropped at the centre of the **board area**) · **Note** (creates "Nuova nota" / "New note" at the centre of the board area, text taken from resources) |
-| Top bar | **Clear** (with a confirmation dialog) · **Delete** (enabled only with a selection) · **Center** (enabled once the layout is measured) · **Reset** · **Import** (SAF, `*/*`) · **Export** (SAF, writes `board.zib`) · **Language icon** (menu: System default / Italiano / English, see §16) |
+| Top bar | **Clear** (with a confirmation dialog) · **Delete** (enabled only with a selection) · **Center** (enabled once the layout is measured) · **Reset** · **Import** (SAF, `*/*`) · **Export** (SAF, writes `board.zib`) · **Language icon** (menu: System default / Italiano / English, see §15) |
 | Selection | Tap on an element = select; tap on empty space = deselect; in SELECT the gesture becomes MOVE, HANDLE or ROTATE depending on the hit |
 | Resize | **Four handles**, one per corner (v1.8), 28 dp grab area: dragging one corner keeps the opposite one fixed. On notes it scales the body text (fixed 220 dp width) |
 | Photo rotation | **Double tap on a photo** → the handles become four curved arrows; dragging them rotates the photo around its centre, snapping to 0/90/180/270° within 4° |
@@ -265,29 +265,27 @@ Details and rules learned over the iterations:
 - `StrokeSelectionBox` + `SelectionHandle`: the bbox frame of the
   selected stroke + its handle (14 dp blue, 4 dp white centre).
 
-## 9. Build (environment + delivery protocol)
+## 9. Build
 
-### 9.1 Environment (everything under `~/`, no sudo)
-| Component | Path | Version |
-|---|---|---|
-| JDK | `~/tools/jdk-17.0.20.1+1` (also `~/java/jdk-17.0.20.1+1`) | Temurin 17.0.20 |
-| Android SDK | `~/android-sdk` | platform-34, build-tools 34.0.0 (licences accepted) |
-| Gradle | wrapper **8.6** in the project | 8.6 |
+The machine-specific environment and the delivery protocol moved to
+[`docs/MAINTAINING.md`](docs/MAINTAINING.md): they are operations, not
+engineering. What stays here is what anyone building the project needs.
 
-### 9.2 Commands (delivery build)
+### 9.1 Commands
 ```bash
-cd ~/zibaldone
-export JAVA_HOME=$HOME/tools/jdk-17.0.20.1+1   # or ~/java/jdk-17.0.20.1+1
-export ANDROID_HOME=$HOME/android-sdk
 ./gradlew :app:clean :app:assembleDebug --console=plain --offline
 ```
+
+`JAVA_HOME` must point at a JDK 17 and `ANDROID_HOME` at an SDK with platform 34;
+on the maintainer's machine neither is on `PATH`, so both are exported by hand
+(the exact paths are in `docs/MAINTAINING.md` §1).
 
 `--offline` is deliberate: the dependencies are expected to be in the local
 Gradle cache already. A release build cannot run offline the first time —
 `lintVitalRelease` pulls `com.android.tools.lint:lint-gradle`, which is not in
 the cache until it has been fetched once.
 
-### 9.2.1 Release build and signing
+### 9.2 Release build and signing
 
 ```bash
 ./gradlew :app:assembleRelease --console=plain
@@ -318,46 +316,11 @@ update, and the app has to be uninstalled first — which also drops the images
 imported into `filesDir`. Export any board you care about as a `.zib` before
 switching a device from a debug build to a release one.
 
-### 9.2.2 Continuous integration
+### 9.3 Continuous integration
 
 `.github/workflows/ci.yml` runs `:app:ktlintCheck` then `:app:assembleDebug` on
 every push to `main` and every pull request, and uploads the debug APK as a
 build artifact. No `--offline` there: a runner has to download its dependencies.
-
-### 9.3 Delivery protocol (applied to every version)
-1. `app/build.gradle.kts`: **`versionCode` +1 and `versionName` → a new
-   label** (mandatory: a file with the same name on the tablet does not
-   pick up the new dex — in v1.0 the app "looked identical" for exactly
-   this reason).
-2. Build (9.2).
-3. `cp app-debug.apk ~/Zibaldone-v<name>.apk` and **remove the previous
-   APK**: exactly **one** installable must exist under `~/`.
-4. **Dex verification**: `unzip` every `classes*.dex`, then
-   `strings | grep -c <new-symbol>` on each one (D8 spreads code over
-   N buckets).
-5. Append a section to this file with symptoms/root cause/fix.
-6. **Commit + tag** (since v1.9, when the project moved to GitHub —
-   `rrenz80/zibaldone`, private): `git add -A`, check with
-   `git status --short` that no build output or `local.properties`
-   sneaks in, commit with the subject `v<versionName>: <what changes>`,
-   then an **annotated** tag `git tag -a v<versionName>` and
-   `git push origin main --follow-tags`. The tag is created **only
-   after** the build and the dex check have passed: it must point at a
-   version that actually compiles. If the tag already exists the version
-   was not bumped → go back to step 1; never move or force-push a tag
-   that has already been published.
-7. **GitHub release** with the APK attached: `gh release create
-   v<versionName> ~/Zibaldone-v<versionName>.apk -R rrenz80/zibaldone
-   -t "..." -F <notes>`, notes written for whoever installs it. Verify
-   the asset really uploaded (`gh release view --json assets`).
-8. Delivery message with the test procedure.
-
-> Language note: through v1.10 commit messages, release notes and the
-> delivery message were written in Italian (the maintainer's language,
-> matching the git history). From v1.10 on, everything written *into the
-> repository* — this file, the README, commit messages, release notes —
-> is in English, so the project reads as one piece for an international
-> audience.
 
 ## 10. Build lessons (in order, across all sessions)
 
@@ -719,7 +682,7 @@ meant to be translated.
    resource is resolved; the globe menu at the end of the top bar saves
    the choice and calls `recreate()`.
 
-The mechanism and its rationale are detailed in **§16**.
+The mechanism and its rationale are detailed in **§15**.
 
 *Decision worth remembering.* No
 `AppCompatDelegate.setApplicationLocales` and no
@@ -885,41 +848,8 @@ same", check the **`versionCode`** and that the APK name differs, and
 **verify the dex** (unzip + strings over every `classes*.dex`) before
 talking about a bug.
 
-## 15. Delivery files
 
-**Where a delivered APK lives.** In the **GitHub release** for its tag —
-that is the durable copy, and since v1.10 the only one kept. The
-`~/Zibaldone-v<name>.apk` that step 3 of the protocol produces is a
-staging artifact for the upload: once `gh release view --json assets`
-confirms it landed, it can be deleted. The single-APK rule under `~/`
-still holds while it is there, so two versions can never be confused for
-one another.
-
-Verify before deleting a local copy, not after: download the asset with
-`gh release download v<name>` and `cmp` it against the local file. Done
-for v1.10 — the release asset is byte-for-byte the built APK, SHA-256
-`82c18bed…a33d4eaa`.
-
-**Getting a build onto the tablet without GitHub** (the repository is
-private, so its download links ask for a login):
-
-```bash
-mkdir -p ~/apk-serve                       # index.html + a hard link to the APK
-python3 -m http.server 8299 --bind <tailnet-ip> --directory ~/apk-serve
-```
-
-Bound to the Tailscale address **only**, never `0.0.0.0`, so it is not
-exposed to the LAN. Port 8299 is the one used for this in the past. It
-is a temporary arrangement: close it when the download is done
-(`kill` the process; there is no `tailscale serve` config to unwind) and
-remove `~/apk-serve/`, or a stale APK stays reachable on the tailnet.
-
-**Installing**: copy the APK to the tablet, tap it, `Accept` the
-"install unknown source" prompt. Debug builds all share the debug
-signature, so a newer one overwrites the older install — but a
-release-signed APK does not (§9.2.1).
-
-## 16. UI language (i18n)
+## 15. UI language (i18n)
 
 Since **v1.10**: the UI exists in **Italian and English**, and the
 language can be chosen inside the app.

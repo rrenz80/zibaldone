@@ -26,7 +26,7 @@ ktlint is configured via the `org.jlleitschuh.gradle.ktlint` Gradle plugin. Run 
 
 ## Delivering a build
 
-When asked to build/deliver/ship a version of the app, use the `deliver-apk` skill — it encodes the full release protocol from PROJECT.md §9.3 (version bump, single-APK rule, dex verification, changelog entry, release commit + annotated tag, test notes). Don't do a plain `assembleDebug` and call it delivered.
+When asked to build/deliver/ship a version of the app, use the `deliver-apk` skill — it encodes the full release protocol from `docs/MAINTAINING.md` §2 (version bump, single-APK rule, dex verification, changelog entry, release commit + annotated tag, test notes). Don't do a plain `assembleDebug` and call it delivered.
 
 ## Git
 
@@ -36,13 +36,13 @@ even when the code change itself was approved. Finish the edit, show what change
 offer the commit as the next step instead of running it. Writing a git step into a
 skill or protocol is not permission to execute it.
 
-Repo `rrenz80/zibaldone` (private), remote `origin`, branch `main`. Commit messages are in English from v1.10 on (earlier history is Italian — don't rewrite it). Each delivered version is one commit plus one annotated tag `v<versionName>`, created by the `deliver-apk` skill — which still asks first. Never move or force-push a tag that has already been pushed.
+Repo `rrenz80/zibaldone`, remote `origin`, branch `main`. Commit messages are in English from v1.10 on (earlier history is Italian — don't rewrite it). Each delivered version is one commit plus one annotated tag `v<versionName>`, created by the `deliver-apk` skill — which still asks first. Never move or force-push a tag that has already been pushed.
 
 ## UI strings (i18n)
 
 Every user-facing string lives in resources, never as a literal in Kotlin: `res/values/strings.xml` is **English** (default and fallback) and `res/values-it/strings.xml` is **Italian**. A new string goes in **both** files — a missing Italian entry silently falls back to English. Messages of internal exceptions stay as English literals: they never reach the user.
 
-The language choice (System default / Italiano / English) is persisted by `util/AppLocale.kt` and applied in `MainActivity.attachBaseContext`; the picker is the globe menu in the top bar. Don't reach for `AppCompatDelegate.setApplicationLocales` or `android:localeConfig` — PROJECT.md §16 explains why this app can't use them.
+The language choice (System default / Italiano / English) is persisted by `util/AppLocale.kt` and applied in `MainActivity.attachBaseContext`; the picker is the globe menu in the top bar. Don't reach for `AppCompatDelegate.setApplicationLocales` or `android:localeConfig` — PROJECT.md §15 explains why this app can't use them.
 
 ## Critical rendering constraint
 
